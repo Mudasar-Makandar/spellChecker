@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+</head>
+
+<body>
+    <label for="text">Enter the Text: </label>
+    <textarea name="input_text" id="input_text" cols="30" rows="10"></textarea>
+    <button id="spell_check_btn" onclick="spellCheck()">SpellCheck</button>
+    <textarea name="output_text" id="output_text" cols="30" rows="10"></textarea>
+    <script src="./spellchecker.js"></script>
+    <script>
+
+        function spellCheck() {
+            let dic_link = 'http://127.0.0.1:5500/spellChecker_node/en-US.dic'
+
+            SpellChecker.getDictionary(dic_link, function (err, res) {
+                // Show result.
+                if (err) {
+                    console.log(err);
+                } else {
+                    var dictionary = res;
+                    let text = document.getElementById('input_text').value
+                    output_text = []
+                    text.split(' ').forEach(word => {
+                        var misspelled = !dictionary.spellCheck(word);
+                        if (!misspelled) {
+                            output_text.push(word)
+                        }
+
+                        else if (misspelled) {
+                            var suggestions = dictionary.getSuggestions(word);
+                            console.log(suggestions)
+                            output_text.push(suggestions[0])
+                        }
+                    });
+                    document.getElementById('output_text').value = output_text.join(' ');
+
+
+                }
+            })
+        }
+
+
+    </script>
+</body>
+
+</html>
